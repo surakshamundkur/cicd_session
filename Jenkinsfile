@@ -12,7 +12,7 @@ pipeline {
         }
         stage ('Checkout SCM') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/cicd_session.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/cicd_session.git']]])
             }
         }
         stage ('Maven Compile') {
@@ -38,14 +38,14 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
                         sh "docker build -t shettysuraksha/cicd ."
-                        sh "docker push sevenajay/pet-clinic123:latest"
+                        sh "docker push shettysuraksha/cicd:latest"
                     }
                 }
             }
         }
         stage ('Deploy to Container') {
             steps {
-                sh 'docker run -d --name pet1 -p 8082:8080 shettysuraksha/cicd:latest'
+                sh 'docker run -d --name pet1 -p 9000:9000 shettysuraksha/cicd:latest'
             }
         }
     }
