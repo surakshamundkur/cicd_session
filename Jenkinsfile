@@ -12,7 +12,7 @@ pipeline {
         }
         stage ('Checkout SCM') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/amazon-eks-jenkins-terraform-aj7.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/cicd_session.git']]])
             }
         }
         stage ('Maven Compile') {
