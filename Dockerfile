@@ -1,5 +1,9 @@
-FROM anapsix/alpine-java
-VOLUME /tmp
-ADD target/spring-petclinic-2.1.0.war app.war
-EXPOSE 9000
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.war"]
+FROM adoptopenjdk:11-jre-hotspot
+
+WORKDIR /app
+
+COPY target/demo-1.0-SNAPSHOT.jar /app/app.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]
