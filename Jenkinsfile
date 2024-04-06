@@ -1,45 +1,46 @@
 pipeline {
     agent any
-    
-    environment {
-        DOCKER_REGISTRY_CREDENTIALS = credentials('docker-hub-credentials')
-    }
-    
+
     stages {
-        stage('Clean Workspace') {
+        stage('Build') {
             steps {
-                cleanWs()
+                sh 'mvn clean package'
             }
         }
-        stage('Checkout SCM') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/cicd_session.git']]])
-            }
-        }
-        stage('Maven Compile') {
-            steps {
-                sh 'mvn clean compile'
-            }
-        }
-        stage('Run Tests') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Build and Push to Docker Hub') {
+        stage('Test') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: DOCKER_REGISTRY_CREDENTIALS, url: 'https://index.docker.io/v1/']) {
-                        sh 'docker build -t shettysuraksha/cicd .'
-                        sh 'docker push shettysuraksha/cicd'
+                    // Run unit tests using Maven
+                    sh 'mvn test'
+                }
+            }
+        }
+        stage('Docker Build & Push') {
+            environment {
+                DOCKER_IMAGE = 'shettysuraksha/cicd'
+                TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+            }
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE}:${TAG}", '.')
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${TAG}").push()
                     }
                 }
             }
         }
-        stage('Deploy to Container') {
+        stage('Deploy') {
             steps {
-                sh 'docker run -d -p 9000:9000 shettysuraksha/cicd'
+                script {
+                    docker.image("${DOCKER_IMAGE}:${TAG}").run('-p 9000:9000 -d')
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline successfully executed!'
         }
     }
 }
