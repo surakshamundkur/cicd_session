@@ -2,7 +2,7 @@ FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-COPY Main.java /app
+COPY src/Main.java /app
 
 # Compile the Java application
 RUN javac Main.java
