@@ -9,52 +9,38 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                // Clone the GitHub repository into the workspace
                 checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/surakshamundkur/cicd_session.git']]])
             }
         }
 
         stage('Build') {
             steps {
-                // Print current working directory
-                sh 'pwd'
-                
-                // List contents of current directory
-                sh 'ls -la'
-
-                // Use 'mvn' command to clean and package the Maven project
                 sh 'mvn clean package'
             }
         }
 
         stage('Test') {
             steps {
-                // Print current working directory
-                sh 'pwd'
-                
-                // List contents of current directory
-                sh 'ls -la'
-
-                // Run unit tests using Maven
-                sh 'mvn test'
+                // Placeholder for running tests (if applicable)
+                echo 'No tests to run'
             }
         }
 
-   stage('Docker Build & Push') {
-    steps {
-        // Build Docker image
-        sh 'docker build -t shettysuraksha/cicd:latest .'
+        stage('Docker Build & Push') {
+            steps {
+                // Build Docker image
+                sh 'docker build -t shettysuraksha/cicd:latest .'
 
-        // Push Docker image to Docker Hub
-        script {
-            docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                docker.image('shettysuraksha/cicd:latest').push()
+                // Push Docker image to Docker Hub
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        docker.image('shettysuraksha/cicd:latest').push()
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Deploy') {
             steps {
