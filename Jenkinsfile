@@ -21,7 +21,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'No tests to run' // Placeholder for running tests (if applicable)
+                sh 'mvn test'
+                //erun unit and integration tests
             }
         }
 
