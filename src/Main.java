@@ -18,11 +18,7 @@ public class Main {
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-<<<<<<< HEAD
-            String response = "Hello, this is a simple Java web application !";
-=======
             String response = "Hello, this is a simple Java web application demo !";
->>>>>>> e976f4c1ac7a1379b218cddcd24a0dcb922408aa
             exchange.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
